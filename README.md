@@ -56,38 +56,40 @@ dsh plugin --profile web remove @huxy/dsh-proxy
 编辑 `~/.dsh/profiles/web/cordis.patch.yml`
 
 ```javascript
-- insert:
-  - id: huxy-dsh-proxy
-    name: '@huxy/dsh-proxy'
-    config: 
-      port: 8030
-      isDev: false
-      session:
-        secret: 'your-secret'
-        maxAge: 30
-      code:
-        ttl: 300000
-        len: 6
-        maxAttempts: 5
-      mail:
-        host: 'smtp.gmail.com'
-        port: 465
-        secure: true
-        auth:
-          type: 'OAuth2'
-          user: 'xxx@gmail.com'
-          clientId: 'xxx'
-          clientSecret: 'xxx'
-          refreshToken: 'xxx'
-        from: 'XX <xxx@gmail.com>'
-        subject: 'XX 访问验证码'
-      allowedEmails:
-        - 'xxx@gmail.com'
-        - 'xxx@qq.com'
-      page:
-        title: 'XX 团队'
-        tips: '请使用 XX 团队电子邮件登录！'
-        footer: '仅供 XX 团队使用。'
+
+- override:
+  - insert:
+    - id: huxy-dsh-proxy
+      name: '@huxy/dsh-proxy'
+      config:
+        port: 8030
+        isDev: false
+        session:
+          secret: 'your-secret'
+          maxAge: 30
+        code:
+          ttl: 300000
+          len: 6
+          maxAttempts: 5
+        mail:
+          host: 'smtp.gmail.com'
+          port: 465
+          secure: true
+          auth:
+            type: 'OAuth2'
+            user: 'xxx@gmail.com'
+            clientId: 'xxx'
+            clientSecret: 'xxx'
+            refreshToken: 'xxx'
+          from: 'XX <xxx@gmail.com>'
+          subject: 'XX 访问验证码'
+        allowedEmails:
+          - 'xxx@gmail.com'
+          - 'xxx@qq.com'
+        page:
+          title: 'XX 团队'
+          tips: '请使用 XX 团队电子邮件登录！'
+          footer: '仅供 XX 团队使用。'
 
 ```
 

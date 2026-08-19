@@ -1,9 +1,17 @@
 {
   "name": "@huxy/dsh-proxy",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "提供代理服务供局域网或 Cloudflared Tunnel、Tailscale 等访问，添加邮箱发验证码鉴权，保障外网安全性。适用于内部系统、管理后台或团队协作场景的轻量级身份验证。",
   "type": "module",
   "module": "./src/index.js",
+  "exports": {
+    ".": {
+      "import": "./src/index.js"
+    },
+    "./*": {
+      "import": "./src/*.js"
+    }
+  },
   "keywords": [
     "dsh",
     "dsh-plugin",
