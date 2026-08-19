@@ -1,0 +1,63 @@
+# 依赖项
+node_modules/
+
+# 环境变量文件
+.env
+.env*.local
+
+# 编辑器文件
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 日志文件
+logs
+*.log
+
+# 构建输出
+build/
+dist/
+
+# 覆盖率报告
+coverage/
+*.lcov
+
+# 系统文件
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 测试文件
+*.spec.js
+*.test.js
+__tests__/
+
+# 临时文件
+*.tmp
+*.bak
+
+# 进程文件
+*.pid
+
+# npm 包输出
+*.tgz
+
+# 密钥和证书
+*.pem
+*.key
+*.crt
+
+# 数据库文件
+*.sqlite
+*.sqlite3
+*.db
+
+# 缓存文件
+.cache
+*.cache
+
+# 编译输出
+*.out
+*.exe
+*.dll

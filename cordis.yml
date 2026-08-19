@@ -1,0 +1,3 @@
+- insert:
+  - id: huxy-dsh-proxy
+    name: '@huxy/dsh-proxy'
