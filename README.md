@@ -61,6 +61,7 @@ dsh plugin --profile web remove @huxy/dsh-proxy
     name: '@huxy/dsh-proxy'
     config: 
       port: 8030
+      isDev: false
       session:
         secret: 'your-secret'
         maxAge: 30
@@ -94,3 +95,5 @@ dsh plugin --profile web remove @huxy/dsh-proxy
 
 - [huxy-node-server](https://www.npmjs.com/package/huxy-node-server) 
 - [huxy-node-server/codeAuth](https://github.com/ahyiru/huxy-node-server/blob/main/docs/AUTH.md) 
+
+开发环境可设置 `isDev` 禁用鉴权页面。
