@@ -11,7 +11,7 @@ const randomUUID_Script = `<script>(function() {
   }
 })();</script>`;
 
-export function apply(ctx, {port, ...authConfig} = {}) {
+export function apply(ctx, {port, isDev, ...authConfig} = {}) {
   ctx.effect(() => {
     ctx.webServer.tapIndex(html => html.replace('</head>', `${randomUUID_Script}</head>`));
     const {httpServer} = startServer({
@@ -22,12 +22,13 @@ export function apply(ctx, {port, ...authConfig} = {}) {
       logger: console,
       serverLogger: (_, logger) => logger.info(`代理服务运行在 ${_.port} 端口`),
     }, null, (_, app) => {
-      codeAuth(authConfig, app);
+      isDev || codeAuth(authConfig, app);
     });
 
     return () => {
-      httpServer.close();
-      console.log('[huxy-dsh-proxy] 代理已关闭');
+      httpServer.close(() => {
+        console.log('[huxy-dsh-proxy] 代理已关闭');
+      });
     };
   });
 };
