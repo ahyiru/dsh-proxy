@@ -5,16 +5,32 @@ export const name = 'huxy-dsh-proxy';
 
 export const inject = ['webServer'];
 
-const randomUUID_Script = `<script>(function() {
-  if (typeof crypto !== 'undefined' && !crypto.randomUUID) {
-    crypto.randomUUID = () => ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
-  }
-})();</script>`;
+const randomUUID_Script = `<script>
+(function() {
+  if (typeof crypto === 'undefined' || crypto.randomUUID) return;
+  Object.defineProperty(crypto, 'randomUUID', {
+    value: function() {
+      const buf = new Uint8Array(16);
+      crypto.getRandomValues(buf);
+      buf[6] = (buf[6] & 0x0f) | 0x40;
+      buf[8] = (buf[8] & 0x3f) | 0x80;
+      return Array.from(buf, (byte, i) => {
+        const hex = byte.toString(16).padStart(2, '0');
+        if ([4, 6, 8, 10].includes(i)) return '-' + hex;
+        return hex;
+      }).join('');
+    },
+    writable: true,
+    configurable: true,
+    enumerable: true
+  });
+})();
+</script>`;
 
 export function apply(ctx, {port, isDev, ...authConfig} = {}) {
-  ctx.effect(() => {
+  ctx.effect(async () => {
     ctx.webServer.tapIndex(html => html.replace('</head>', `${randomUUID_Script}</head>`));
-    const {httpServer} = startServer({
+    const {httpServer} = await startServer({
       port,
       proxys: [{
         target: 'http://localhost:3080',
@@ -26,9 +42,8 @@ export function apply(ctx, {port, isDev, ...authConfig} = {}) {
     });
 
     return () => {
-      httpServer.close(() => {
-        console.log('[huxy-dsh-proxy] 代理已关闭');
-      });
+      httpServer.close();
+      console.log('[huxy-dsh-proxy] 代理已关闭');
     };
   });
 };
