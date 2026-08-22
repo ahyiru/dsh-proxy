@@ -33,7 +33,7 @@ export function apply(ctx, {port, isDev, ...authConfig} = {}) {
     const {httpServer} = await startServer({
       port,
       proxys: [{
-        target: 'http://localhost:3080',
+        target: `http://localhost:${ctx.webServer.config?.port ?? 3080}`,
       }],
       logger: console,
       serverLogger: (_, logger) => logger.info(`代理服务运行在 ${_.port} 端口`),
