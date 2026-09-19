@@ -50,7 +50,11 @@ export function apply(ctx, {port, authHosts, authConfig} = {}) {
         }
         next();
       });
-      codeAuth(authConfig, app);
+      try {
+        codeAuth(authConfig, app);
+      } catch (err) {
+        console.error(`❌ 鉴权服务启动失败，如需启用请完善 [authConfig] 配置！Error: ${err.message}`);
+      }
     });
 
     return () => {
