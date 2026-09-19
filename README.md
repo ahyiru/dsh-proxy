@@ -10,8 +10,8 @@
 
 ```
 export function apply(ctx, {port, isDev, ...authConfig} = {}) {
-  ctx.effect(() => {
-    const {httpServer} = startServer({
+  ctx.effect(async () => {
+    const {httpServer} = await startServer({
       port,
       proxys: [{
         target: 'http://localhost:3080',

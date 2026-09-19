@@ -5,8 +5,14 @@ export const name = 'huxy-dsh-proxy';
 
 export const inject = ['webServer'];
 
-const randomUUID_Script = `<script>
+const BOOTSTRAP_SCRIPT = `<script>
 (function() {
+  if (!globalThis.__DSH_TRANSPORT__) {
+    globalThis.__DSH_TRANSPORT__ = {
+      ownsHost: true,
+      fetch,
+    };
+  }
   if (typeof crypto === 'undefined' || crypto.randomUUID) return;
   Object.defineProperty(crypto, 'randomUUID', {
     value: function() {
@@ -29,7 +35,7 @@ const randomUUID_Script = `<script>
 
 export function apply(ctx, {port, isDev, ...authConfig} = {}) {
   ctx.effect(async () => {
-    ctx.webServer.tapIndex(html => html.replace('</head>', `${randomUUID_Script}</head>`));
+    ctx.webServer.tapIndex(html => html.replace('</head>', `${BOOTSTRAP_SCRIPT}</head>`));
     const {httpServer} = await startServer({
       port,
       proxys: [{
