@@ -9,7 +9,7 @@
 ## 实现
 
 ```
-export function apply(ctx, {port, isDev, ...authConfig} = {}) {
+export function apply(ctx, {port, authHosts, authConfig} = {}) {
   ctx.effect(async () => {
     const {httpServer} = await startServer({
       port,
@@ -19,7 +19,13 @@ export function apply(ctx, {port, isDev, ...authConfig} = {}) {
       logger: console,
       serverLogger: (_, logger) => logger.info(`代理服务运行在 ${_.port} 端口`),
     }, null, (_, app) => {
-      isDev || codeAuth(authConfig, app);
+      app.use((req, res, next) => {
+        if (authHosts && !authHosts.includes(req.hostname)) {
+          req.trustedAuthHost = true;
+        }
+        next();
+      });
+      codeAuth(authConfig, app);
     });
 
     return () => {
@@ -66,40 +72,46 @@ dsh plugin --profile web remove @huxy/dsh-proxy
   name: '@huxy/dsh-proxy'
   config:
     port: 8030
-    session:
-      secret: 'your-secret'
-      maxAge: 30
-    code:
-      ttl: 300000
-      len: 6
-      maxAttempts: 5
-    mail:
-      host: 'smtp.gmail.com'
-      port: 465
-      secure: true
-      auth:
-        type: 'OAuth2'
-        user: 'xxx@gmail.com'
-        clientId: 'xxx'
-        clientSecret: 'xxx'
-        refreshToken: 'xxx'
-      from: 'XX <xxx@gmail.com>'
-      subject: 'XX 访问验证码'
-    allowedEmails:
-      - 'xxx@gmail.com'
-      - 'xxx@qq.com'
-    page:
-      title: 'XX 团队'
-      tips: '请使用 XX 团队电子邮件验证！'
-      footer: '仅供 XX 团队使用。'
+    authHosts:
+      - 'prod.host.com'
+      - '192.168.0.111'
+    authConfig:
+      session:
+        secret: 'your-secret'
+        maxAge: 30
+      code:
+        ttl: 300000
+        len: 6
+        maxAttempts: 5
+      mail:
+        host: 'smtp.gmail.com'
+        port: 465
+        secure: true
+        auth:
+          type: 'OAuth2'
+          user: 'xxx@gmail.com'
+          clientId: 'xxx'
+          clientSecret: 'xxx'
+          refreshToken: 'xxx'
+        from: 'XX <xxx@gmail.com>'
+        subject: 'XX 访问验证码'
+      allowedEmails:
+        - 'xxx@gmail.com'
+        - 'xxx@qq.com'
+      page:
+        title: 'XX 团队'
+        tips: '请使用 XX 团队电子邮件验证！'
+        footer: '仅供 XX 团队使用。'
 
 ```
+
+- port: 代理端口
+- authHosts: 需要开启鉴权的站点，默认所有站点都开启鉴权
+- authConfig: 鉴权页面详细配置
 
 详细配置可参见：
 
 - [huxy-node-server](https://www.npmjs.com/package/huxy-node-server) 
 - [huxy-node-server/codeAuth](https://github.com/ahyiru/huxy-node-server/blob/main/docs/AUTH.md) 
-
-开发环境可设置 `isDev: true` 禁用鉴权页面。
 
 ![dsh-plugin](./img/p2.png)

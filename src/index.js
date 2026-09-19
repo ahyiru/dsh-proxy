@@ -33,7 +33,7 @@ const BOOTSTRAP_SCRIPT = `<script>
 })();
 </script>`;
 
-export function apply(ctx, {port, isDev, ...authConfig} = {}) {
+export function apply(ctx, {port, authHosts, authConfig} = {}) {
   ctx.effect(async () => {
     ctx.webServer.tapIndex(html => html.replace('</head>', `${BOOTSTRAP_SCRIPT}</head>`));
     const {httpServer} = await startServer({
@@ -44,7 +44,13 @@ export function apply(ctx, {port, isDev, ...authConfig} = {}) {
       logger: console,
       serverLogger: (_, logger) => logger.info(`代理服务运行在 ${_.port} 端口`),
     }, null, (_, app) => {
-      isDev || codeAuth(authConfig, app);
+      app.use((req, res, next) => {
+        if (authHosts && !authHosts.includes(req.hostname)) {
+          req.trustedAuthHost = true;
+        }
+        next();
+      });
+      codeAuth(authConfig, app);
     });
 
     return () => {
