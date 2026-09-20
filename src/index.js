@@ -7,12 +7,10 @@ export const inject = ['webServer'];
 
 const BOOTSTRAP_SCRIPT = `<script>
 (function() {
-  if (!globalThis.__DSH_TRANSPORT__) {
-    globalThis.__DSH_TRANSPORT__ = {
-      ownsHost: true,
-      fetch,
-    };
+  if (typeof globalThis.__DSH_TRANSPORT__ === 'undefined') {
+    globalThis.__DSH_TRANSPORT__ = {};
   }
+  globalThis.__DSH_TRANSPORT__.ownsHost = true;
   if (typeof crypto === 'undefined' || crypto.randomUUID) return;
   Object.defineProperty(crypto, 'randomUUID', {
     value: function() {
